@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0,
+        maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://kit.fontawesome.com/b82f2b0cbc.js" crossorigin="anonymous"></script>
+
+    <title>Google Advanced Search</title>
+</head>
+
+<body>
+    <section class="header advanced-page">
+        <div class="container">
+
+            <img src="./images/googlelogo_color_272x92dp.png" style="width: 92px; height: 33px;">
+
+            <div class="navbar">
+                <ul class="MenuItems">
+                    <li><a href="index.html">Home</a></li>
+                    <li><img src="./images/menu.png" class="MenuIcon" alt="menu.png"></li>
+                    <li><a href="#">Sign in</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="main">
+        <div class="container">
+            <div class="row advanced">
+                <div class="appbar">
+                    <label>Advanced Search</label>
+                </div>
+                <div class="hline"></div>
+                <div class="options">
+                    <div class="options-title">
+                        <span>Find pages with...</span>
+                        <div>&nbsp;</div>
+                        <span>To do this in the search box</span>
+                    </div>
+                    <div class="options-elements">
+                        <div class="elements">
+                            <label>all these words:</label>
+                            <input type="text" id="as-q-input">
+                            <div class="elements-end">
+                                Type the important words:
+                                <span>tricolor rat terrier</span>
+                            </div>
+                        </div>
+                        <div class="elements">
+                            <label>this exact word or phrase:</label>
+                            <input type="text" id="as-epq-input">
+                            <div class="elements-end">
+                                Put exact words in quotes:
+                                <span>"rat terrier"</span>
+                            </div>
+                        </div>
+                        <div class="elements">
+                            <label>any of these words:</label>
+                            <input type="text" id="as-oq-input">
+                            <div class="elements-end">
+                                Type
+                                <span>OR</span>
+                                between all the words you want:
+                                <span style="display: block; margin-left: 8px;">miniature OR standard</span>
+                            </div>
+                        </div>
+                        <div class="elements">
+                            <label>none of these words:</label>
+                            <input type="text" id="as-eq-input">
+                            <div class="elements-end">
+                                Put a minus sign just before words you don't want:
+                                <span style="display: block; margin-left: 8px;">-rodent, -"Jack Russell"</span>
+                            </div>
+                        </div>
+                        <div class="elements-submit">
+                            <label>&nbsp;</label>
+                            <div>
+                                <button onclick="advancedSearch()">Advanced Search</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="baseline">&nbsp;</div>
+                </div>
+                <div class="more">
+                    <div class="more-title">
+                        <span>You can also...</span>
+                    </div>
+                    <div class="more-links">
+                        <a href="#">Find pages that are similar to a URL</a>
+                        <a href="#">Search pages you've visited</a>
+                        <a href="#">Use operators in the search box</a>
+                        <a href="#">Customize your search settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <ul class="footer-items">
+                    <li><a href="#">Help</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+</body>
+<script>
+    // Get the input field
+    var as_q_input = document.getElementById("as-q-input");
+    var as_epq_input = document.getElementById("as-epq-input");
+    var as_oq_input = document.getElementById("as-oq-input");
+    var as_eq_input = document.getElementById("as-eq-input");
+
+    // Execute a function when the user releases a key on the keyboard
+    document.querySelectorAll(".elements input").forEach(item => {
+        item.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                advancedSearch();
+            }
+        })
+    });
+
+    function advancedSearch() {
+        window.location.href = `https://google.com/search?as_q=${as_q_input.value}&as_epq=${as_epq_input.value}&as_oq=${as_oq_input.value}&as_eq=${as_eq_input.value}`;
+    }
+</script>
+
+</html>

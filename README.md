@@ -1,1 +1,1 @@
-# CS50-Project0__GoogleSearch
+# CS50-Project1__Wiki

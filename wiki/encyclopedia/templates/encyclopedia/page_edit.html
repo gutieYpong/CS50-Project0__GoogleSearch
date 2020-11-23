@@ -1,0 +1,28 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Edit Page
+{% endblock %}
+
+{% block body %}
+    <h1>Edit Page</h1>
+    <hr>
+    {% comment %} <form action="{% url 'encyclopedia:editpage' None %}" method="post"> {% endcomment %}
+    <form action="/wiki/edit/{{ form.sub_input.initial }}" method="post">
+        {% csrf_token %}
+        {{ form.sub_input }}
+        <br><br>
+        {{ form.content_input }}
+        <br>
+        <button type="submit">Save Changes</button>
+    </form>
+{% endblock %}
+
+{% block style %}
+    form input {
+        width:230px;
+    }
+    form textarea {
+        width:80%;height:50vh;resize: none;
+    }
+{% endblock %}

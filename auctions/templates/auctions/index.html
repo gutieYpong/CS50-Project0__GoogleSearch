@@ -2,6 +2,12 @@
 
 {% block body %}
     <h2>Active Listings</h2>
+    {% for item in items %}
+        <img src="{{ item.item_image.url }}">
 
-    TODO
+        <h4>{{ item.item_name }}</h4>
+        <h6>{{ item.item_desc }}</h5>
+        <h6 class="bid">{{ item.starting_bid }}</h6>
+    {% endfor %}
+
 {% endblock %}

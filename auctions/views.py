@@ -4,12 +4,27 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import User, Listing, Category
 
 def index(request):
     return render(request, "auctions/index.html", {
         "items": Listing.objects.all()
     })
+
+def category(request):
+    return render(request, "auctions/category.html", {
+        "categories": Category.objects.all()
+    })
+
+def category_listing(request, cate_id):
+
+    cate_listing = Listing.objects.filter(item_category_id=cate_id)
+
+    return render(request, "auctions/category_listing.html", {
+        "cate_listing": cate_listing,
+        "cate_title": cate_listing.first().item_category
+    })
+
 
 
 def login_view(request):

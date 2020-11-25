@@ -1,0 +1,14 @@
+id,action_time,object_id,object_repr,change_message,content_type_id,user_id,action_flag
+1,2020-11-24 20:21:18.077781,1,Item 1: Big Ass,"[{""added"": {}}]",7,2,1
+2,2020-11-24 20:22:56.766720,2,Item 2: Small Pee Pee,"[{""added"": {}}]",7,2,1
+3,2020-11-25 10:31:59.698071,1,Item 1: Big Ass,,7,2,3
+4,2020-11-25 10:32:18.162788,2,Item 2: Small Pee Pee,,7,2,3
+5,2020-11-25 10:37:57.015861,1,Item 1: The Potato,"[{""added"": {}}]",7,2,1
+6,2020-11-25 10:42:45.974322,1,Item 1: The Potato,"[{""changed"": {""fields"": [""Item image""]}}]",7,2,2
+7,2020-11-25 10:42:56.643153,1,Item 1: The Potato,"[{""changed"": {""fields"": [""Item image""]}}]",7,2,2
+8,2020-11-25 12:08:04.411759,2,Item 2: Pumpkin before blooded,"[{""added"": {}}]",7,2,1
+9,2020-11-25 15:52:55.019701,1,Category object (1),"[{""added"": {}}]",8,2,1
+10,2020-11-25 15:53:01.126434,2,Category object (2),"[{""added"": {}}]",8,2,1
+11,2020-11-25 15:53:06.143817,3,Category object (3),"[{""added"": {}}]",8,2,1
+12,2020-11-25 16:25:42.200179,1,Item 1: The Potato,"[{""changed"": {""fields"": [""Item category""]}}]",7,2,2
+13,2020-11-25 16:25:45.518492,2,Item 2: Pumpkin before blooded,"[{""changed"": {""fields"": [""Item category""]}}]",7,2,2

@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings - {{ cate_title }}</h2>
+    {% for listing in cate_listing %}
+        <img src="{{ listing.item_image.url }}">
+        <h4>{{ listing.item_name }}</h4>
+        <h6>{{ listing.item_desc }}</h5>
+        <h6 class="bid">{{ listing.starting_bid }}</h6>
+    {% endfor %}
+{% endblock %}

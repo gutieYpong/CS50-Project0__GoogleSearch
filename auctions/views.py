@@ -3,8 +3,27 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User, Listing, Category
+
+class NewListingForm(forms.Form):
+
+    image_upload = forms.ImageField(label="Image: ")
+    name_input = forms.CharField(label="Listing Name: ", widget=forms.TextInput(attrs={"placeholder":"Type in the listing name here."}))
+    desc_input = forms.CharField(label="Listing Desc: ", widget=forms.Textarea(attrs={"placeholder":"Type in the listing description here."}))
+    bid_input = forms.FloatField(label="Starting Bid: ")
+    cate_select = forms.ChoiceField(label="Category: ", choices=tuple((cate.id, cate.category) for cate in Category.objects.all()))
+
+
+    def __init__(self, *args, **kwargs):
+
+        super(NewListingForm, self).__init__(*args, **kwargs)
+        self.fields['name_input'].initial = ""
+        self.fields['desc_input'].initial = ""
+        self.fields['bid_input'].initial = 0
+
+
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -23,6 +42,46 @@ def category_listing(request, cate_id):
     return render(request, "auctions/category_listing.html", {
         "cate_listing": cate_listing,
         "cate_title": cate_listing.first().item_category
+    })
+
+def create_listing(request):
+
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
+    if request.method == "POST":
+        
+        form = NewListingForm(request.POST, request.FILES)
+        # print(form)
+
+        if form.is_valid():
+            name = form.cleaned_data["name_input"]
+            desc = form.cleaned_data["desc_input"]
+            bid = form.cleaned_data["bid_input"]
+            cate = Category.objects.get(pk=form.cleaned_data["cate_select"])
+            img = form.cleaned_data["image_upload"]
+
+            # print(name, desc, type(bid), type(cate), type(img))
+            new_listing = Listing(item_name=name, item_desc=desc, starting_bid=bid, item_category=cate, item_image=img)
+            new_listing.save()
+
+        return HttpResponseRedirect(reverse("index"))
+
+    else:   
+        form = NewListingForm()
+
+        return render(request, "auctions/create_listing.html", {
+            "form": form
+        })
+
+
+def detail(request, item_name):
+
+    listing_item = Listing.objects.get(item_name=item_name)
+
+
+    return render(request, "auctions/listing_detail.html", {
+        "item": listing_item
     })
 
 

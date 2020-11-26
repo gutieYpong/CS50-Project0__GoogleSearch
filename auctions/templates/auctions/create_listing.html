@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listing</h2>
+    {% comment %} <form action="{% url 'create_listing' form.cate_select.id %}" method="post"> {% endcomment %}
+    <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.name_input.label }}{{ form.name_input }}
+        <br>
+        {{ form.desc_input.label }}{{ form.desc_input }}
+        <br>
+        {{ form.bid_input.label }}{{ form.bid_input }}
+        <br>
+        {{ form.cate_select.label }}{{ form.cate_select }}
+        <br>
+        {{ form.image_upload.label }}{{ form.image_upload }}
+        <br>
+        <input type="submit" value="Create Listing">
+        
+    </form>
+
+{% endblock %}

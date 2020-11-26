@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings - {{ cate_title }}</h2>
+    <h2>Active Listings - {{ cate_title.category }}</h2>
     {% for listing in cate_listing %}
         <img src="{{ listing.item_image.url }}">
         <h4>{{ listing.item_name }}</h4>

@@ -24,6 +24,13 @@ class Listing(models.Model):
         # return f"Item {self.id}: {self.item_name}, {self.item_desc}, {self.starting_bid}, {self.item_category}"
         return f"Item {self.id}: {self.item_name}"
 
+
+class Bidder(models.Model):
+    item_id = models.IntegerField()
+    bid_count = models.IntegerField()
+    bidder_name = models.CharField(max_length=150)
+
+
 class Comment(models.Model):
     user_name = models.CharField(max_length=150)
     item_comment = models.ManyToManyField(Listing, blank=True, related_name="comments")

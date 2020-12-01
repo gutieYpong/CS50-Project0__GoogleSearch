@@ -135,6 +135,28 @@ def add_2_watchlist(request, item_id):
     return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 
 
+def bid_update(request, item_id):
+
+    # Get the listing info whose watchlist gonna get updated.
+    listing_info = Listing.objects.get(pk=item_id)
+
+    # Get the user info who is gonna add an item.
+    req_user_id = request.user.id
+    user_info = User.objects.get(pk=req_user_id)
+
+    if request.method == "POST":
+        
+        listing_info.bid_count += 1
+        listing_info.starting_bid = float(request.POST["bid"])
+
+        listing_info.save()
+
+        messages.info(request, "Your bid has been placed.")
+
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+
+
+
 def if_user_login(request):
 
     if not request.user.is_authenticated:

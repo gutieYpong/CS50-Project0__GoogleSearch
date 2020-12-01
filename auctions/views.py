@@ -106,20 +106,33 @@ def add_2_watchlist(request, item_id):
 
     # Get the listing info whose watchlist gonna get updated.
     listing_info = Listing.objects.get(pk=item_id)
+
+    # Get the users ID in this listing's watchlist
     watchlist_users = [user.id for user in listing_info.watchlist.all()]
 
-    print(watchlist_users)
-
     # Get the user info who is gonna add an item.
-    user_info = User.objects.get(pk=request.user.id)
-    
-    # Do the update of the watchlist
-    listing_info.watchlist.add(user_info)
+    req_user_id = request.user.id
+    user_info = User.objects.get(pk=req_user_id)
 
-    messages.info(request, "This item has been added to your watchlist.")
-    messages.info(request, "You can cancel it by clicking the icon once more.")
 
-    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":"The Potato"}))
+    if req_user_id not in watchlist_users:
+
+        # Do the adding of the watchlist
+        listing_info.watchlist.add(user_info)
+
+        messages.info(request, "This item has been added to your watchlist.")
+        messages.info(request, "You can cancel it by clicking the icon once more.")
+
+    else:
+
+        # Do the removing from the watchlist
+        listing_info.watchlist.remove(user_info)        
+
+        messages.info(request, "This item has been removed from your watchlist.")
+        messages.info(request, "You can add it by clicking the icon once more.")
+
+
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 
 
 def if_user_login(request):

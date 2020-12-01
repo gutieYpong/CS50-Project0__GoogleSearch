@@ -15,7 +15,12 @@
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
-     {% endif %}
+    {% endif %}
+    <p>? bid(s) so far. Your bid is the current bid.</p>
+    <form>
+        <input type="number" min="100" step="0.01" placeholder="Place you bid here.">
+        <input type="submit" value="Place Bid">
+    </form>
 
 
 {% endblock %}

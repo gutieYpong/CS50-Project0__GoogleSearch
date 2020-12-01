@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+     <h2>{{ user_name }} favorite Listings</h2>
+    
+    {% for item in user_watchlist %}
+        <img src="{{ item.item_image.url }}">
+        <h4>{{ item.item_name }}</h4>
+        <h6>{{ item.item_desc }}</h5>
+        <h6 class="bid">{{ item.starting_bid }}</h6>
+    {% endfor %}
+
+{% endblock %}

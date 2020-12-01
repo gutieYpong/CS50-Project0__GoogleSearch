@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -6,6 +7,7 @@ from django.urls import reverse
 from django import forms
 
 from .models import User, Listing, Category
+
 
 class NewListingForm(forms.Form):
 
@@ -30,10 +32,12 @@ def index(request):
         "items": Listing.objects.all()
     })
 
+
 def category(request):
     return render(request, "auctions/category.html", {
         "categories": Category.objects.all()
     })
+
 
 def category_listing(request, cate_id):
 
@@ -44,10 +48,10 @@ def category_listing(request, cate_id):
         "cate_title": cate_listing.first().item_category
     })
 
+
 def create_listing(request):
 
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("login"))
+    if_user_login(request)
 
     if request.method == "POST":
         
@@ -84,6 +88,40 @@ def detail(request, item_name):
         "item": listing_item
     })
 
+
+def watchlist(request):
+
+    if_user_login(request)
+
+    user_watchlist = (User.objects.get(id=request.user.id)).favorites.all()
+
+    return render(request, "auctions/watchlist.html", {
+        "user_name": request.user,
+        "user_watchlist": user_watchlist
+    })
+
+
+def add_2_watchlist(request, item_id):
+
+    if_user_login(request)
+
+    listing_info = Listing.objects.get(pk=item_id)
+    
+    # user_info = listing_info.watchlist.get(pk=request.user.id))
+    user_info = User.objects.get(pk=request.user.id)
+    
+    listing_info.watchlist.add(user_info)
+
+    messages.info(request, "This item has been added to your watchlist.")
+    messages.info(request, "You can cancel it by clicking the icon once more.")
+
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":"The Potato"}))
+
+
+def if_user_login(request):
+
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
 
 
 def login_view(request):

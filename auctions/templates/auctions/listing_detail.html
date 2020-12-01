@@ -5,9 +5,17 @@
     <h2>{{ item.item_name }}</h2>
     <h6>{{ item.item_desc }}</h5>
     <h6 class="bid">{{ item.starting_bid }}</h6>
-    <span><a href="#"><i class="far fa-heart"></i></a></span>
-    <span><i class="fas fa-heart"></i></span>
-
+    <div class="add_2_watchlist_icon">
+        <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="far fa-heart"></i></a></span>
+        <span><i class="fas fa-heart"></i></span>
+    </div>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+     {% endif %}
 
 
 {% endblock %}

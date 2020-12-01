@@ -17,14 +17,15 @@ class Listing(models.Model):
     item_desc = models.CharField(max_length=128)
     starting_bid = models.FloatField()
     item_category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="classified")
+    watchlist = models.ManyToManyField(User, blank=True, related_name="favorites")
 
     def __str__(self):
         # return f"Item {self.id}: {self.item_name}, {self.item_desc}, {self.starting_bid}, {self.item_category}"
         return f"Item {self.id}: {self.item_name}"
 
-class Watchlist(models.Model):
-    user_name = models.CharField(max_length=150)
-    watchlist = models.ManyToManyField(Listing, blank=True, related_name="favorites")
+# class Watchlist(models.Model):
+#     user_name = models.CharField(max_length=150)
+#     watchlist = models.ManyToManyField(Listing, blank=True, related_name="favorites")
 
 
 

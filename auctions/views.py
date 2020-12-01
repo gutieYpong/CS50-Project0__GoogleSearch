@@ -83,7 +83,6 @@ def detail(request, item_name):
 
     listing_item = Listing.objects.get(item_name=item_name)
 
-
     return render(request, "auctions/listing_detail.html", {
         "item": listing_item
     })
@@ -105,11 +104,16 @@ def add_2_watchlist(request, item_id):
 
     if_user_login(request)
 
+    # Get the listing info whose watchlist gonna get updated.
     listing_info = Listing.objects.get(pk=item_id)
-    
-    # user_info = listing_info.watchlist.get(pk=request.user.id))
+    watchlist_users = [user.id for user in listing_info.watchlist.all()]
+
+    print(watchlist_users)
+
+    # Get the user info who is gonna add an item.
     user_info = User.objects.get(pk=request.user.id)
     
+    # Do the update of the watchlist
     listing_info.watchlist.add(user_info)
 
     messages.info(request, "This item has been added to your watchlist.")

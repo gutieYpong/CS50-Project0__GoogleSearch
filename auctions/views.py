@@ -6,7 +6,10 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing, Category
+from .models import User, Listing, Category, Bidder
+
+from datetime import datetime
+
 
 
 class NewListingForm(forms.Form):
@@ -82,9 +85,11 @@ def create_listing(request):
 def detail(request, item_name):
 
     listing_item = Listing.objects.get(item_name=item_name)
-
+    last_bidder = (Bidder.objects.latest('bid_time')).bidder_name
+    
     return render(request, "auctions/listing_detail.html", {
-        "item": listing_item
+        "item": listing_item,
+        "last_bidder": last_bidder
     })
 
 
@@ -146,12 +151,16 @@ def bid_update(request, item_id):
 
     if request.method == "POST":
         
+        # Update the bidding value and bidding count
         listing_info.bid_count += 1
         listing_info.starting_bid = float(request.POST["bid"])
-
         listing_info.save()
-
         messages.info(request, "Your bid has been placed.")
+
+        # Update the Bidder Class
+        bidder_info = Bidder(bidder_item=listing_info, bid_count=listing_info.bid_count, bidder_name=user_info, bid_time=datetime.now())
+        bidder_info.save()
+
 
     return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 

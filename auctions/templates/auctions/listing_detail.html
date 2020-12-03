@@ -5,24 +5,29 @@
     <h2>{{ item.item_name }}</h2>
     <h6>{{ item.item_desc }}</h5>
     <h6 class="bid">{{ item.starting_bid }}</h6>
-    <div class="add_2_watchlist_icon">
-        <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="far fa-heart"></i></a></span>
-        <span><i class="fas fa-heart"></i></span>
-    </div>
-    <p>{{ item.bid_count }} bid(s) so far. Your bid is the current bid.</p>
-    <form action="{% url 'bid_update' item.id %}" method="post">
-        {% csrf_token %}
-        <input type="number" min={{ item.starting_bid }} step="0.01" placeholder="Place you bid here." name="bid">
-        <input type="submit" value="Place Bid">
-    </form>
 
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
+    {% if item.is_active %}
+        <div class="add_2_watchlist_icon">
+            <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="far fa-heart"></i></a></span>
+            <span><i class="fas fa-heart"></i></span>
+        </div>
+        <div>
+            <span>{{ item.bid_count }} bid(s) so far.</span>
+            <span>Last bid was acted by {{ last_bidder }}</span>
+        </div>
+        <form action="{% url 'bid_update' item.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" min={{ item.starting_bid }} step="0.01" placeholder="Place you bid here." name="bid">
+            <input type="submit" value="Place Bid">
+        </form>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     {% endif %}
-
 
 {% endblock %}

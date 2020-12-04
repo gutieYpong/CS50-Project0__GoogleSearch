@@ -13,13 +13,21 @@
         </div>
         <div>
             <span>{{ item.bid_count }} bid(s) so far.</span>
-            <span>Last bid was acted by {{ last_bidder }}</span>
+            {% if any_bidder %}
+                <span>Last bid was acted by {{ last_bidder }}</span>
+            {% endif %}
         </div>
         <form action="{% url 'bid_update' item.id %}" method="post">
             {% csrf_token %}
             <input type="number" min={{ item.starting_bid }} step="0.01" placeholder="Place you bid here." name="bid">
             <input type="submit" value="Place Bid">
         </form>
+        {% if is_creater %}
+            <form action="{% url 'close_bid' item.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="CloseBid">Close Bid</button>
+            </form>
+        {% endif %}
 
         {% if messages %}
             <ul class="messages">
@@ -29,5 +37,8 @@
             </ul>
         {% endif %}
     {% endif %}
+
+    
+
 
 {% endblock %}

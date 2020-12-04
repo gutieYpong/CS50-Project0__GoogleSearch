@@ -31,8 +31,13 @@ class NewListingForm(forms.Form):
 
 
 def index(request):
+
+    listings_active = Listing.objects.filter(is_active=True)
+    listings_inactive = Listing.objects.filter(is_active=False)
+
     return render(request, "auctions/index.html", {
-        "items": Listing.objects.all()
+        "active_items": listings_active,
+        "inactive_items": listings_inactive
     })
 
 
@@ -85,12 +90,36 @@ def create_listing(request):
 def detail(request, item_name):
 
     listing_item = Listing.objects.get(item_name=item_name)
-    last_bidder = (Bidder.objects.latest('bid_time')).bidder_name
-    
-    return render(request, "auctions/listing_detail.html", {
-        "item": listing_item,
-        "last_bidder": last_bidder
-    })
+    bidder_obj = Bidder.objects.filter(bidder_item=listing_item.id)
+
+    # By default, both values below are False until they got validated.
+    is_creater = False
+    any_bidder = False
+
+    # Validates the identity of the request user.
+    if listing_item.item_creater_id == request.user.id:
+        is_creater = True
+
+    # Validates if any bidder exists.
+    if bidder_obj.exists():
+
+        last_bidder = bidder_obj.latest('bid_time').bidder_name
+        any_bidder = True
+
+        return render(request, "auctions/listing_detail.html", {
+            "item": listing_item,
+            "last_bidder": last_bidder,
+            "is_creater": is_creater,
+            "any_bidder": any_bidder
+        })
+
+    else:
+
+        return render(request, "auctions/listing_detail.html", {
+            "item": listing_item,
+            "is_creater": is_creater,
+            "any_bidder": any_bidder
+        })
 
 
 def watchlist(request):
@@ -161,9 +190,33 @@ def bid_update(request, item_id):
         bidder_info = Bidder(bidder_item=listing_info, bid_count=listing_info.bid_count, bidder_name=user_info, bid_time=datetime.now())
         bidder_info.save()
 
-
     return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 
+
+def close_bid(request, item_id):
+
+    # Get the listing info which will be closed.
+    listing_info = Listing.objects.get(pk=item_id)
+
+    # Get the user info who is gonna close the bid (The Creater).
+    req_user_id = request.user.id
+    user_info = User.objects.get(pk=req_user_id)
+
+    # Make sure the one who closes the bid must be the item creater.
+    assert listing_info.item_creater_id == req_user_id, "You're not allowed to be here, BACK OFF!!!"
+    print('the creater ID & req user ID: ', listing_info.item_creater_id, req_user_id)
+
+    # Update the is_active status of the closing bid.
+    listing_info.is_active = False
+    listing_info.save()
+
+    # Show who is the bid winner.
+    bid_winner = Bidder.objects.filter(bidder_item=item_id).latest('bid_time').bidder_name
+
+    messages.info(request, "You've successfully closed this deal. Congratulations!")
+    messages.info(request, "The Highest Bidder is {}".format(bid_winner))
+
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 
 
 def if_user_login(request):

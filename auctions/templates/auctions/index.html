@@ -2,12 +2,27 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    {% for item in items %}
-        <a href="{% url 'detail' item.item_name %}"><img src="{{ item.item_image.url }}"></a>
 
-        <h4>{{ item.item_name }}</h4>
-        <h6>{{ item.item_desc }}</h5>
-        <h6 class="bid">{{ item.starting_bid }}</h6>
-    {% endfor %}
+    {% if active_items %}
+        {% for item in active_items %}
+            <a href="{% url 'detail' item.item_name %}"><img src="{{ item.item_image.url }}"></a>
+
+            <h4>{{ item.item_name }}</h4>
+            <h6>{{ item.item_desc }}</h5>
+            <h6 class="bid">{{ item.starting_bid }}</h6>
+        {% endfor %}    
+    {% endif %}
+
+    <h2>Closed Listings</h2>
+    {% if inactive_items %}
+        {% for item in inactive_items %}
+            <a href="{% url 'detail' item.item_name %}"><img src="{{ item.item_image.url }}"></a>
+
+            <h4>{{ item.item_name }}</h4>
+            <h6>{{ item.item_desc }}</h5>
+            <h6 class="bid">{{ item.starting_bid }}</h6>
+        {% endfor %}    
+    {% endif %}
+    
 
 {% endblock %}

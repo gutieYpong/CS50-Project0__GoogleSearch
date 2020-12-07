@@ -39,7 +39,11 @@
                 {% endfor %}
             </ul>
         {% endif %}
+    
+    {% else %}
+        <h3>THIS AUCTION WINNER IS {{ last_bidder }}.</h3>
     {% endif %}
+
 
     {% if comments %}
         <div class="comment-container">

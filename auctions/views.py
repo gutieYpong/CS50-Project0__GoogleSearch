@@ -174,7 +174,7 @@ def add_2_watchlist(request, item_id):
         messages.info(request, "You can add it by clicking the icon once more.")
 
 
-    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
 def bid_update(request, item_id):
@@ -199,7 +199,7 @@ def bid_update(request, item_id):
         bidder_info.save()
 
 
-    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
 def close_bid(request, item_id):
@@ -224,7 +224,7 @@ def close_bid(request, item_id):
     messages.info(request, "You've successfully closed this deal. Congratulations!")
     messages.info(request, "The Highest Bidder is {}".format(bid_winner))
 
-    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
 def comment_submit(request, item_id):
@@ -240,7 +240,7 @@ def comment_submit(request, item_id):
         comment_obj = Comment(comment_item=listing_info, comment_name=user_info, comment_content=request.POST["CMcontent"])
         comment_obj.save()
 
-    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 def get_listings_info(item_id):
 

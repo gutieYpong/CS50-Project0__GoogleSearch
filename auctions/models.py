@@ -13,10 +13,6 @@ class Category(models.Model):
         return f"{self.id}, {self.category}"
 
 
-# class Category(models.Model):
-#     cate_name = models.CharField(max_length=24)
-#     cate_image = models.ImageField(upload_to='images/', blank=True, null=True)
-
 class Listing(models.Model):
     item_image = models.ImageField(upload_to='images/', blank=True, null=True)
     item_name = models.CharField(max_length=64)
@@ -30,7 +26,6 @@ class Listing(models.Model):
 
 
     def __str__(self):
-        # return f"Item {self.id}: {self.item_name}, {self.item_desc}, {self.starting_bid}, {self.item_category}"
         return f"Item {self.id}: {self.item_name}"
 
 
@@ -39,6 +34,10 @@ class Bidder(models.Model):
     bid_count = models.IntegerField()
     bidder_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name="biddername")
     bid_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"The bidder of item {self.bidder_item} is {self.bidder_name}."
+
 
 class Comment(models.Model):
     comment_item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="commentitem")

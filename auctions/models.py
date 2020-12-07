@@ -7,9 +7,15 @@ class User(AbstractUser):
 
 class Category(models.Model):
     category = models.CharField(max_length=24)
+    cate_image = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}, {self.category}"
+
+
+# class Category(models.Model):
+#     cate_name = models.CharField(max_length=24)
+#     cate_image = models.ImageField(upload_to='images/', blank=True, null=True)
 
 class Listing(models.Model):
     item_image = models.ImageField(upload_to='images/', blank=True, null=True)
@@ -22,6 +28,7 @@ class Listing(models.Model):
     is_active = models.BooleanField(default=True)
     item_creater = models.ForeignKey(User, on_delete=models.CASCADE, related_name="creater")
 
+
     def __str__(self):
         # return f"Item {self.id}: {self.item_name}, {self.item_desc}, {self.starting_bid}, {self.item_category}"
         return f"Item {self.id}: {self.item_name}"
@@ -31,9 +38,17 @@ class Bidder(models.Model):
     bidder_item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bidderitem")
     bid_count = models.IntegerField()
     bidder_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name="biddername")
-    bid_time = models.DateTimeField()
+    bid_time = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
-    commet_item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="commentitem")
-    commet_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentname")
-    item_comment = models.CharField(max_length=300)
+    comment_item = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="commentitem")
+    comment_name = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commentname")
+    comment_content = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_on']
+
+    def __str__(self):
+        return 'Comment {} by {}'.format(self.comment_content, self.comment_name)
+

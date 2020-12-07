@@ -2,11 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django import forms
+from django.utils import timezone
 
-from .models import User, Listing, Category, Bidder
+from .models import User, Listing, Category, Bidder, Comment
 
 from datetime import datetime
 
@@ -27,8 +28,7 @@ class NewListingForm(forms.Form):
         self.fields['name_input'].initial = ""
         self.fields['desc_input'].initial = ""
         self.fields['bid_input'].initial = 0
-
-
+    
 
 def index(request):
 
@@ -61,6 +61,10 @@ def create_listing(request):
 
     if_user_login(request)
 
+    # Get the user info who is gonna add an item.
+    req_user_id = request.user.id
+    user_info = User.objects.get(pk=req_user_id)
+
     if request.method == "POST":
         
         form = NewListingForm(request.POST, request.FILES)
@@ -74,7 +78,7 @@ def create_listing(request):
             img = form.cleaned_data["image_upload"]
 
             # print(name, desc, type(bid), type(cate), type(img))
-            new_listing = Listing(item_name=name, item_desc=desc, starting_bid=bid, item_category=cate, item_image=img)
+            new_listing = Listing(item_name=name, item_desc=desc, starting_bid=bid, item_category=cate, item_image=img, item_creater=user_info)
             new_listing.save()
 
         return HttpResponseRedirect(reverse("index"))
@@ -91,16 +95,17 @@ def detail(request, item_name):
 
     listing_item = Listing.objects.get(item_name=item_name)
     bidder_obj = Bidder.objects.filter(bidder_item=listing_item.id)
+    comment_obj = Comment.objects.filter(comment_item=listing_item.id)
 
-    # By default, both values below are False until they got validated.
+    ### By default, both values below are False until they got validated.
     is_creater = False
     any_bidder = False
 
-    # Validates the identity of the request user.
+    ### Validates the identity of the request user.
     if listing_item.item_creater_id == request.user.id:
         is_creater = True
 
-    # Validates if any bidder exists.
+    ### Validates if any bidder exists.
     if bidder_obj.exists():
 
         last_bidder = bidder_obj.latest('bid_time').bidder_name
@@ -110,7 +115,8 @@ def detail(request, item_name):
             "item": listing_item,
             "last_bidder": last_bidder,
             "is_creater": is_creater,
-            "any_bidder": any_bidder
+            "any_bidder": any_bidder,
+            "comments": comment_obj
         })
 
     else:
@@ -118,7 +124,8 @@ def detail(request, item_name):
         return render(request, "auctions/listing_detail.html", {
             "item": listing_item,
             "is_creater": is_creater,
-            "any_bidder": any_bidder
+            "any_bidder": any_bidder,
+            "comments": comment_obj
         })
 
 
@@ -187,7 +194,8 @@ def bid_update(request, item_id):
         messages.info(request, "Your bid has been placed.")
 
         # Update the Bidder Class
-        bidder_info = Bidder(bidder_item=listing_info, bid_count=listing_info.bid_count, bidder_name=user_info, bid_time=datetime.now())
+        # bidder_info = Bidder(bidder_item=listing_info, bid_count=listing_info.bid_count, bidder_name=user_info, bid_time=datetime.now())
+        bidder_info = Bidder(bidder_item=listing_info, bid_count=listing_info.bid_count, bidder_name=user_info)
         bidder_info.save()
 
     return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
@@ -195,26 +203,42 @@ def bid_update(request, item_id):
 
 def close_bid(request, item_id):
 
-    # Get the listing info which will be closed.
+    ### Get the listing info which will be closed.
     listing_info = Listing.objects.get(pk=item_id)
 
-    # Get the user info who is gonna close the bid (The Creater).
+    ### Get the user info who is gonna close the bid (The Creater).
     req_user_id = request.user.id
     user_info = User.objects.get(pk=req_user_id)
 
-    # Make sure the one who closes the bid must be the item creater.
+    ### Make sure the one who closes the bid must be the item creater.
     assert listing_info.item_creater_id == req_user_id, "You're not allowed to be here, BACK OFF!!!"
-    print('the creater ID & req user ID: ', listing_info.item_creater_id, req_user_id)
+    # print('the creater ID & req user ID: ', listing_info.item_creater_id, req_user_id)
 
-    # Update the is_active status of the closing bid.
+    ### Update the is_active status of the closing bid.
     listing_info.is_active = False
     listing_info.save()
 
-    # Show who is the bid winner.
+    ### Show who is the bid winner.
     bid_winner = Bidder.objects.filter(bidder_item=item_id).latest('bid_time').bidder_name
 
     messages.info(request, "You've successfully closed this deal. Congratulations!")
     messages.info(request, "The Highest Bidder is {}".format(bid_winner))
+
+    return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
+
+
+def comment_submit(request, item_id):
+
+    ### Get the listing info which will be closed.
+    listing_info = Listing.objects.get(pk=item_id)
+
+    ### Get the user info who is gonna add an item.
+    req_user_id = request.user.id
+    user_info = User.objects.get(pk=req_user_id)
+
+    if request.method == "POST":
+        comment_obj = Comment(comment_item=listing_info, comment_name=user_info, comment_content=request.POST["CMcontent"])
+        comment_obj.save()
 
     return HttpResponseRedirect(reverse("detail", kwargs={"item_name":listing_info.item_name}))
 

@@ -38,7 +38,29 @@
         {% endif %}
     {% endif %}
 
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="container">
+                <div class="comment-box">
+                    <h5>{{ comment.comment_name }}</h5>
+                    <span class="comment-date">{{ comment.created_on }}</span>
+                    <div class="visual"></div>
+                    <p>{{ comment.comment_content }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
     
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment_submit' item.id %}" method="POST">
+            {% csrf_token %}
+            <textarea name="CMcontent" placeholder="Write your thoughts here..."></textarea>
+            <button type="submit" name="CMsubmit">Comment Submit</button>
+        </form>
+    {% endif %}
 
+{% endblock %}
 
+{% block style %}
+    
 {% endblock %}

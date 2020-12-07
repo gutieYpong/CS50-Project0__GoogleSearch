@@ -1,10 +1,13 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Create Listing</h2>
-    {% comment %} <form action="{% url 'create_listing' form.cate_select.id %}" method="post"> {% endcomment %}
+    <h2 class="theme">Create Listing</h2>
+
+    <div class="listings-col-3">
     <form action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
+
         {% csrf_token %}
+
         {{ form.name_input.label }}{{ form.name_input }}
         <br>
         {{ form.desc_input.label }}{{ form.desc_input }}
@@ -18,5 +21,5 @@
         <input type="submit" value="Create Listing">
         
     </form>
-
+    </div>
 {% endblock %}

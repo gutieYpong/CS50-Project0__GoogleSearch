@@ -1,9 +1,0 @@
-id,app_label,model
-1,auctions,user
-2,admin,logentry
-3,auth,permission
-4,auth,group
-5,contenttypes,contenttype
-6,sessions,session
-7,auctions,listing
-8,auctions,category

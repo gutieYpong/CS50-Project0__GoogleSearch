@@ -1,13 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    padding: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1, h2 {
+    margin-bottom: 0;
 }
 
 img {
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 100%;
+    object-fit: fill;
+    height: 220px; 
 }
 
-.bid {
+.header {
+    max-width: 100%;
+    margin: auto;
+    background-color: cyan;
+}
+
+.header .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px;
+}
+
+.header .navbar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    background-color: green;
+}
+
+.header a {
+    color: black;
+    font-weight: bold;
+}
+
+.header a:hover {
+    color: #007bff;
+}
+
+.main .row {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-around; */
+    flex-direction: column;
+}
+
+.theme {
+    position: relative;
+    line-height: 60px;
+    color: #555;
+    text-align: center;
+    /* margin: 0 auto 10px; */
+}
+.theme::after {
+    position: absolute;
+    content: "";
+    background: #ff523b;
+    width: 80px;
+    height: 5px;
+    border-radius: 5px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.listings-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;          
+    justify-content: space-around;
+    margin: 40px 80px;
+}
+
+.listings-col-3 {
+    position: relative;
+    flex-basis: 30%;
+    min-width: 250px;
+    min-height: 330px;
+    margin-bottom: 30px;
+    transition: transform 0.5s;
+    /* align-items: inherit; */
+    display: flex;
+    flex-direction: column;
+}
+
+.listings-col-3:hover {
+    transform: translateY(-5px);
+}
+
+.listings-col-3 .listings-desc {
+    margin-bottom: 30px;
+}
+
+.listings-col-3 .bid {
+    position: absolute;
     color: gray;
+    bottom: 0;
+}
+
+form textarea {
+    width:30%;height:20vh;resize: none;
+}
+
+.container {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    background-color: gray;
+}
+
+.container .visual {
+    aspect-ratio: 16/9;
+    background: wheat;
+    margin: 0.5rem 0;
+    color: green;
+    height: 5px;
 }

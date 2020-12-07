@@ -126,7 +126,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     BASE_DIR + "/auctions/static",
 ]
-print(STATICFILES_DIRS, STATIC_URL)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

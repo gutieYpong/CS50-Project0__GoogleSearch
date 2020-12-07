@@ -7,7 +7,7 @@
         {% for item in user_watchlist %}
 
             <div class="listings-col-3">
-                <a href="{% url 'detail' item.item_name %}">
+                <a href="{% url 'detail' item.id %}">
                     <img src="{{ item.item_image.url }}">
                 </a>
                 <h4>{{ item.item_name }}</h4>

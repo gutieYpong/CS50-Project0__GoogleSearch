@@ -12,10 +12,6 @@ h1, h2 {
     margin-bottom: 0;
 }
 
-p {
-    color: red;
-}
-
 img {
     max-width: 100%;
     object-fit: fill;
@@ -93,7 +89,6 @@ img {
     min-height: 330px;
     margin-bottom: 30px;
     transition: transform 0.5s;
-    /* align-items: inherit; */
     display: flex;
     flex-direction: column;
 }
@@ -112,22 +107,98 @@ img {
     bottom: 0;
 }
 
-form textarea {
-    width:30%;height:20vh;resize: none;
+.creating-col {
+    position: relative;
+    flex-basis: 1;
+    min-width: 250px;
+    min-height: 330px;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-.container {
+.creating-col .create-name {
+    min-width: 500px;
+}
+
+.creating-col .create-content, .comment-area {
+    min-width: 500px;
+    height:20vh;
+    resize: none;
+    white-space: pre-line;
+}
+
+.creating-subcol {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.creating-subcol label {
+    text-align: right;
+    width: 105px;
+}
+
+.creating-col .creating-btn {
+    width: 150px;
+    margin-top: 20px;
+}
+
+.comment-container {
     width: 30%;
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    background-color: gray;
+    background-color: antiquewhite;
+    margin: 20px 0;
 }
 
-.container .visual {
+.comment-container .visual {
     aspect-ratio: 16/9;
     background: wheat;
     margin: 0.5rem 0;
     color: green;
-    height: 5px;
+    height: 1px;
+}
+
+
+.item-desc {
+    color: red;
+}
+
+.comment-content {
+    white-space: pre-line;
+    font-size: 1vw;
+}
+
+.comment-date {
+    float: right;
+    font-size: 8px;
+}
+
+.comment-user {
+    font-size: 14px;
+}
+
+.comment-area-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.comment-area-col .comment-area {
+    margin: 10px;
+}
+
+.comment-area-col button {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.place-bid {
+    width: 100px;
+}
+
+.close-bid {
+    margin-top: 10px;
+    width: 150px;
+    font-weight: bolder;
 }

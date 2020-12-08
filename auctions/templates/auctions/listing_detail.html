@@ -7,39 +7,38 @@
     <h6 class="bid">USD {{ item.starting_bid }}</h6>
 
     {% if item.is_active %}
-        <div class="add_2_watchlist_icon">
-            {% if is_favorite %}
-                <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="fas fa-heart"></i></a></span>
-            {% else %}
-                <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="far fa-heart"></i></a></span>
-            {% endif %}
-        </div>
-        <div>
-            <span>{{ item.bid_count }} bid(s) so far.</span>
-            {% if any_bidder %}
+        {% if user.is_authenticated %}
+            <div class="add_2_watchlist_icon">
+                {% if is_favorite %}
+                    <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="fas fa-heart"></i></a></span>
+                {% else %}
+                    <span><a href="{% url 'add_2_watchlist' item.id %}"><i class="far fa-heart"></i></a></span>
+                {% endif %}
+            </div>
+            <div>
+                <span>{{ item.bid_count }} bid(s) so far.</span>
                 <span>Last bid was acted by {{ last_bidder }}</span>
-            {% endif %}
-        </div>
-        <form action="{% url 'bid_update' item.id %}" method="post">
-            {% csrf_token %}
-            <input type="number" min={{ item.starting_bid }} step="0.01" placeholder="Place you bid here." name="bid">
-            <input class="place-bid" type="submit" value="Place Bid">
-        </form>
-        {% if is_creater %}
-            <form action="{% url 'close_bid' item.id %}" method="post">
+            </div>
+            <form action="{% url 'bid_update' item.id %}" method="post">
                 {% csrf_token %}
-                <button class="close-bid" type="submit" name="CloseBid">Close Bid</button>
+                <input type="number" min={{ item.starting_bid }} step="0.01" placeholder="Place you bid here." name="bid">
+                <input class="place-bid" type="submit" value="Place Bid">
             </form>
-        {% endif %}
+            {% if is_creater %}
+                <form action="{% url 'close_bid' item.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="close-bid" type="submit" name="CloseBid">Close Bid</button>
+                </form>
+            {% endif %}
 
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}         
         {% endif %}
-    
     {% else %}
         <h3>THIS AUCTION WINNER IS {{ last_bidder }}.</h3>
     {% endif %}

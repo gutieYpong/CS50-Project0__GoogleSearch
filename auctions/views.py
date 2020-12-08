@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django import forms
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Listing, Category, Bidder, Comment
 
@@ -57,9 +58,8 @@ def category_listing(request, cate_id):
     })
 
 
+@login_required(login_url='login')
 def create_listing(request):
-
-    if_user_login(request)
 
     ### Get the user info who is gonna add an item.
     req_user_id = request.user.id
@@ -95,12 +95,6 @@ def detail(request, item_id):
     bidder_obj = Bidder.objects.filter(bidder_item=listing_item.id)
     comment_obj = Comment.objects.filter(comment_item=listing_item.id)
 
-    ### Validates if this item is in the watchlist of the requested user
-    is_favorite = bool(User.objects.get(id=request.user.id).favorites.all().filter(id=listing_item.id))
-
-    ### Validates the identity of the request user.
-    is_creater = True if listing_item.item_creater_id == request.user.id else False
-
     ### By default, this value below is False until it got validated.
     any_bidder = False
 
@@ -110,11 +104,18 @@ def detail(request, item_id):
         last_bidder = bidder_obj.latest('bid_time').bidder_name
         any_bidder = True
 
+    if request.user.is_authenticated:
+
+        ### Validates if this item is in the watchlist of the requested user
+        is_favorite = bool(User.objects.get(id=request.user.id).favorites.all().filter(id=listing_item.id))
+
+        ### Validates the identity of the request user.
+        is_creater = True if listing_item.item_creater_id == request.user.id else False
+
         return render(request, "auctions/listing_detail.html", {
             "item": listing_item,
-            "last_bidder": last_bidder,
+            "last_bidder": last_bidder if any_bidder else None, 
             "is_creater": is_creater,
-            "any_bidder": any_bidder,
             "comments": comment_obj,
             "is_favorite": is_favorite
         })
@@ -123,16 +124,13 @@ def detail(request, item_id):
 
         return render(request, "auctions/listing_detail.html", {
             "item": listing_item,
-            "is_creater": is_creater,
-            "any_bidder": any_bidder,
             "comments": comment_obj,
-            "is_favorite": is_favorite
-        })
+            "last_bidder": last_bidder if any_bidder else None
+            })
 
 
+@login_required(login_url='login')
 def watchlist(request):
-
-    if_user_login(request)
 
     user_watchlist = (User.objects.get(id=request.user.id)).favorites.all()
 
@@ -142,9 +140,8 @@ def watchlist(request):
     })
 
 
+@login_required(login_url='login')
 def add_2_watchlist(request, item_id):
-
-    if_user_login(request)
 
     ### Get the listing info whose watchlist gonna get updated.
     listing_info = get_listings_info(item_id)
@@ -177,6 +174,7 @@ def add_2_watchlist(request, item_id):
     return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
+@login_required(login_url='login')
 def bid_update(request, item_id):
 
     ### Get the listing info whose watchlist gonna get updated.
@@ -202,6 +200,7 @@ def bid_update(request, item_id):
     return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
+@login_required(login_url='login')
 def close_bid(request, item_id):
 
     ### Get the listing info which will be closed.
@@ -227,6 +226,7 @@ def close_bid(request, item_id):
     return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
 
+@login_required(login_url='login')
 def comment_submit(request, item_id):
 
     ### Get the listing info which will be closed.
@@ -242,15 +242,10 @@ def comment_submit(request, item_id):
 
     return HttpResponseRedirect(reverse("detail", kwargs={"item_id":listing_info.id}))
 
+
 def get_listings_info(item_id):
 
     return Listing.objects.get(pk=item_id)
-
-
-def if_user_login(request):
-
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("login"))
 
 
 def login_view(request):

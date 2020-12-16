@@ -29,6 +29,8 @@ def compose(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
+    # print(request.body)
+
     # Check recipient emails
     data = json.loads(request.body)
     emails = [email.strip() for email in data.get("recipients").split(",")]
@@ -54,8 +56,8 @@ def compose(request):
 
     # Create one email for each recipient, plus sender
     users = set()
-    users.add(request.user)
-    users.update(recipients)
+    users.add(request.user) ### single value use "add"
+    users.update(recipients) ### list, array, set use "update"
     for user in users:
         email = Email(
             user=user,
@@ -64,11 +66,12 @@ def compose(request):
             body=body,
             read=user == request.user
         )
+        print(email.read)
         email.save()
         for recipient in recipients:
             email.recipients.add(recipient)
         email.save()
-
+        
     return JsonResponse({"message": "Email sent successfully."}, status=201)
 
 
@@ -80,6 +83,8 @@ def mailbox(request, mailbox):
         emails = Email.objects.filter(
             user=request.user, recipients=request.user, archived=False
         )
+        # emails = User.objects.get(id=request.user.id).emails_received.all()
+        # print(emails[1].recipients.all())
     elif mailbox == "sent":
         emails = Email.objects.filter(
             user=request.user, sender=request.user
@@ -93,6 +98,7 @@ def mailbox(request, mailbox):
 
     # Return emails in reverse chronologial order
     emails = emails.order_by("-timestamp").all()
+
     return JsonResponse([email.serialize() for email in emails], safe=False)
 
 
@@ -103,6 +109,7 @@ def email(request, email_id):
     # Query for requested email
     try:
         email = Email.objects.get(user=request.user, pk=email_id)
+        
     except Email.DoesNotExist:
         return JsonResponse({"error": "Email not found."}, status=404)
 

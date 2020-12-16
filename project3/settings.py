@@ -50,6 +50,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+### Prevent Clickjacking
+# X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 ROOT_URLCONF = 'project3.urls'
 
 TEMPLATES = [

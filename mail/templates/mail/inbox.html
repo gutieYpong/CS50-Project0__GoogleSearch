@@ -14,11 +14,18 @@
     <div id="emails-view">
     </div>
 
+    <div id="content-view">
+    </div>
+
     <div id="compose-view">
         <h3>New Email</h3>
+        {% comment %} <form id="compose-form" action="{% url 'compose' %}" method="post"> {% endcomment %}
         <form id="compose-form">
+
+            {% comment %} {% csrf_token %} {% endcomment %}
+
             <div class="form-group">
-                From: <input disabled class="form-control" value="{{ request.user.email }}">
+                From: <input disabled class="form-control" value="{{ request.user.email }}" name="sendfrom">
             </div>
             <div class="form-group">
                 To: <input id="compose-recipients" class="form-control">
@@ -27,11 +34,11 @@
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
             <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
-            <input type="submit" class="btn btn-primary"/>
+            <input onclick="submit_mails()" type="button" class="btn btn-primary" value="Submit"/>
         </form>
     </div>
 {% endblock %}
 
 {% block script %}
-    <script src="{% static 'mail/inbox.js' %}"></script>
+    <script src="{% static 'mail/inbox5.js' %}"></script>
 {% endblock %}

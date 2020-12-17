@@ -29,8 +29,6 @@ def compose(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # print(request.body)
-
     # Check recipient emails
     data = json.loads(request.body)
     emails = [email.strip() for email in data.get("recipients").split(",")]
@@ -66,7 +64,6 @@ def compose(request):
             body=body,
             read=user == request.user
         )
-        print(email.read)
         email.save()
         for recipient in recipients:
             email.recipients.add(recipient)
@@ -83,8 +80,6 @@ def mailbox(request, mailbox):
         emails = Email.objects.filter(
             user=request.user, recipients=request.user, archived=False
         )
-        # emails = User.objects.get(id=request.user.id).emails_received.all()
-        # print(emails[1].recipients.all())
     elif mailbox == "sent":
         emails = Email.objects.filter(
             user=request.user, sender=request.user

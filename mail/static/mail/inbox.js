@@ -17,6 +17,8 @@ function compose_email() {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#content-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#message').innerHTML = '';
+
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -32,6 +34,7 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#content-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#message').innerHTML = '';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -42,24 +45,18 @@ function load_mailbox(mailbox) {
 // Load next set of mails
 function load_mails(mailbox) {
 
+  var messages = document.querySelector('#message');
+
   // Get new mails and add mails
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(data => {
 
-    // if (mailbox == 'archive') {
-
-    //   data.forEach( data.archived ? data => add_mails(data, mailbox) : null );
-
-    // } else if (mailbox == 'inbox') {
-
-    //   data.forEach( !data.archived ? data => add_mails(data, mailbox) : null );
-
-    // } else {
-      
-    // }
-
-    data.forEach( data => add_mails(data, mailbox) );
+    if (data == '') {
+      messages.innerHTML = "You have 0 mails.";
+    } else {
+      data.forEach( data => add_mails(data, mailbox) );
+    }
 
   });
 
@@ -82,6 +79,7 @@ function add_mails(contents, mailbox) {
     // Judge whether the 'tick' icon should be solid or regular
     if (contents.read == true ) {
       mail.innerHTML += `<i class="fas fa-check-circle"></i>`;
+      mail.style.backgroundColor = 'lightgray';
     } else {
       mail.innerHTML += `<i class="far fa-check-circle"></i>`;
     }
@@ -108,6 +106,7 @@ function view_mails(mail_id) {
   fetch(`/emails/${mail_id}`)
   .then(response => response.json())
   .then(email => {
+
     // Print email
     console.log(email);
 
@@ -128,19 +127,40 @@ function view_mails(mail_id) {
                             <button class="btn btn-sm btn-outline-primary func-btn" id="content-archive">Unarchive</button>
                             </div>`;
     
+      // Add content to DOM
+      document.querySelector('#content-view').append(content);
+      
+      // Add click listener to the button archive
+      document.querySelector('#content-archive').addEventListener('click', () => archive_mails(email));
+
+    } else if (email.sender == email.user ) {
+      
+      content.innerHTML +=  `<div class="content-func-div">
+                            <button class="btn btn-sm btn-outline-primary func-btn" id="content-reply">Reply</button>
+                            </div>`;
+
+      // Add content to DOM
+      document.querySelector('#content-view').append(content);
+    
+      // Add click listener to the button Reply
+      document.querySelector('#content-reply').addEventListener('click', () => reply_mails(email));
+
     } else {
       
       content.innerHTML +=  `<div class="content-func-div">
                             <button class="btn btn-sm btn-outline-primary func-btn" id="content-archive">Archive</button>
                             <button class="btn btn-sm btn-outline-primary func-btn" id="content-reply">Reply</button>
                             </div>`;
-    }
-      
-    // Add content to DOM
-    document.querySelector('#content-view').append(content);
+
+      // Add content to DOM
+      document.querySelector('#content-view').append(content);
     
-    // Add click listener to the button archive
-    document.querySelector('#content-archive').addEventListener('click', () => archive_mails(email));
+      // Add click listener to the button Archive
+      document.querySelector('#content-archive').addEventListener('click', () => archive_mails(email));
+      // Add click listener to the button Reply
+      document.querySelector('#content-reply').addEventListener('click', () => reply_mails(email));
+
+    }
 
     if (email.read == false) {
       fetch(`/emails/${mail_id}`, {
@@ -182,8 +202,25 @@ function archive_mails(contents) {
 
   window.location.reload();
   // load_mailbox('inbox');
-  
+
 }
+
+
+function reply_mails(contents) {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#content-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  reply_format = /^[Re]+\:\ /;
+
+  // Clear out composition fields
+  document.querySelector('#compose-recipients').value = contents.sender;
+  document.querySelector('#compose-subject').value 
+    = (contents.subject.search(reply_format) == 0) ? `${contents.subject}` : `Re: ${contents.subject}`;
+  document.querySelector('#compose-body').value = `${contents.body}\n\n<span>"On ${contents.timestamp} ${contents.sender} wrote:"</span>`;
+}
+
 
 function submit_mails() {
 

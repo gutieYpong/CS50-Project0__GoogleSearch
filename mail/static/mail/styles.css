@@ -64,6 +64,13 @@ span:nth-child(1) {
 
 .content-body-div-sub {
     margin-top: 10px;
+    white-space: pre-line;
+}
+
+.content-body-div-sub span {
+    font-size: 10px;
+    font-weight: 200;
+    margin-left: 20px;
 }
 
 .content-date-div {
